@@ -1,12 +1,11 @@
 import * as core from '@actions/core';
-
-import * as action from './action';
-import * as cake from './cake';
-import * as cakeTool from './cakeTool';
-import { CakeToolSettings } from './cakeToolSettings';
-import * as dotnet from './dotnet';
-import { isError, isString } from './guards';
 import { ToolsDirectory } from './toolsDirectory';
+import { CakeToolSettings } from './cakeToolSettings';
+import { isError, isString } from './guards';
+import * as dotnet from './dotnet';
+import * as cakeTool from './cakeTool';
+import * as cake from './cake';
+import * as action from './action';
 
 export async function run() {
   try {
@@ -24,7 +23,9 @@ export async function run() {
     dotnet.disableTelemetry();
     dotnet.disableWelcomeMessage();
 
-    if (!csprojPath) {
+    if (csprojPath) {
+      await cake.runProject(csprojPath, toolsDir, ...inputs.scriptArguments);
+    } else {
       await cakeTool.install(toolsDir, version);
 
       if (bootstrap === 'explicit') {
@@ -32,8 +33,6 @@ export async function run() {
       }
 
       await cake.runScript(scriptPath, cakeToolSettings, ...inputs.scriptArguments);
-    } else {
-      await cake.runProject(csprojPath, toolsDir, ...inputs.scriptArguments);
     }
 
   } catch (error) {
