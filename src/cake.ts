@@ -33,6 +33,7 @@ export async function runProject(
     '--no-launch-profile',
     '--verbosity', 'minimal',
     '--configuration', 'Release',
+    '--',
     `--paths_tools="${toolsDir}"`,
     ...cakeParams
   ]);

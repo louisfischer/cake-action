@@ -1,16 +1,15 @@
+import * as path from 'path';
 import { exec } from '@actions/exec';
 import { which } from '@actions/io';
-import * as path from 'path';
-
 import * as cake from '../src/cake';
-import { CakeArgument, CakeSwitch } from '../src/cakeParameter';
-import { CakeToolSettings } from '../src/cakeToolSettings';
 import { ToolsDirectory } from '../src/toolsDirectory';
+import { CakeToolSettings } from '../src/cakeToolSettings';
+import { CakeArgument, CakeSwitch } from '../src/cakeParameter';
 
 const pathToLocalToolsDirectory = path.join('path', 'to', 'tool');
 const pathToLocalTool = path.join(pathToLocalToolsDirectory, 'dotnet-cake');
-const dotnetManifestCake = 'dotnet tool run dotnet-cake';
 const pathToCsprojFile = path.join('build', 'Build.csproj');
+const dotnetManifestCake = 'dotnet tool run dotnet-cake';
 const dotnetRun = 'dotnet run';
 
 jest.mock('@actions/exec');
@@ -212,6 +211,7 @@ describe('When running a Cake Frosting project successfully', () => {
         '--no-launch-profile',
         '--verbosity', 'minimal',
         '--configuration', 'Release',
+        '--',
         `--paths_tools="${fakeToolsDirectory.path}"`
       ]);
   });
@@ -230,6 +230,7 @@ describe('When running a Cake Frosting project successfully', () => {
         '--no-launch-profile',
         '--verbosity', 'minimal',
         '--configuration', 'Release',
+        '--',
         `--paths_tools="${fakeToolsDirectory.path}"`,
         '--param=arg',
         '--switch'
@@ -244,7 +245,7 @@ describe('When failing to run a Cake Frosting Project', () => {
     fakeExec.mockReturnValue(Promise.resolve(-21));
   });
 
-  test('it should throw error when csproj-path does not exist', async () => {
+  test('it should throw an error containing the exit code', async () => {
     await expect(cake.runProject('', new ToolsDirectory())).rejects.toThrow('-21');
   });
 });

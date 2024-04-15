@@ -4096,6 +4096,7 @@ function runProject(csprojPath, toolsDir, ...params) {
             '--no-launch-profile',
             '--verbosity', 'minimal',
             '--configuration', 'Release',
+            '--',
             `--paths_tools="${toolsDir}"`,
             ...cakeParams
         ]);
@@ -4454,13 +4455,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const action = __importStar(__nccwpck_require__(7672));
-const cake = __importStar(__nccwpck_require__(9275));
-const cakeTool = __importStar(__nccwpck_require__(4574));
-const cakeToolSettings_1 = __nccwpck_require__(6881);
-const dotnet = __importStar(__nccwpck_require__(9870));
-const guards_1 = __nccwpck_require__(3265);
 const toolsDirectory_1 = __nccwpck_require__(6745);
+const cakeToolSettings_1 = __nccwpck_require__(6881);
+const guards_1 = __nccwpck_require__(3265);
+const dotnet = __importStar(__nccwpck_require__(9870));
+const cakeTool = __importStar(__nccwpck_require__(4574));
+const cake = __importStar(__nccwpck_require__(9275));
+const action = __importStar(__nccwpck_require__(7672));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -4474,15 +4475,15 @@ function run() {
             const cakeToolSettings = new cakeToolSettings_1.CakeToolSettings(toolsDir, (version === null || version === void 0 ? void 0 : version.version) === 'tool-manifest');
             dotnet.disableTelemetry();
             dotnet.disableWelcomeMessage();
-            if (!csprojPath) {
+            if (csprojPath) {
+                yield cake.runProject(csprojPath, toolsDir, ...inputs.scriptArguments);
+            }
+            else {
                 yield cakeTool.install(toolsDir, version);
                 if (bootstrap === 'explicit') {
                     yield cake.bootstrapScript(scriptPath, cakeToolSettings);
                 }
                 yield cake.runScript(scriptPath, cakeToolSettings, ...inputs.scriptArguments);
-            }
-            else {
-                yield cake.runProject(csprojPath, toolsDir, ...inputs.scriptArguments);
             }
         }
         catch (error) {

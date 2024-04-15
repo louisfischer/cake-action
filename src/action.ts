@@ -1,5 +1,4 @@
 import * as core from '@actions/core';
-
 import * as script from './cakeParameter';
 import * as input from './input';
 
