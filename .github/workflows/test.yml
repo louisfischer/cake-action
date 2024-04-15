@@ -141,6 +141,8 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
+    env:
+      csproj-directory: integrationtests/frosting
     steps:
       - name: Get the sources
         uses: actions/checkout@v1
@@ -155,9 +157,17 @@ jobs:
       - name: Run a specific Cake Frosting project
         uses: ./
         with:
-          csproj-path: integrationtests/frosting/Build.csproj
+          csproj-path: ${{ env.csproj-directory}}/Build.csproj
       - name: Run a specific Cake Frosting task
         uses: ./
         with:
-          csproj-path: integrationtests/frosting/Build.csproj
+          csproj-path: ${{ env.csproj-directory}}/Build.csproj
           target: Successful-Task
+      - name: Run with a specific verbosity level
+        uses: ./
+        env:
+          EXPECTED_VERBOSITY: Diagnostic
+        with:
+          verbosity: Diagnostic
+          csproj-path: ${{ env.csproj-directory}}/Build.csproj
+          target: Test-Verbosity
